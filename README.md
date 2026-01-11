@@ -31,13 +31,14 @@ I initiated this project to bridge the gap between theoretical security concepts
 ---
 
 ## 2. Phase 0: Environment Provisioning (The Lab Setup)
-Before any security analysis could occur, I had to architect the underlying infrastructure. I utilized Microsoft Azure to deploy a distributed system consisting of a target endpoint and a centralized log management system[cite: 9].
+Before any security analysis could occur, I had to architect the underlying infrastructure. I utilized Microsoft Azure to deploy a distributed system consisting of a target endpoint and a centralized log management system.
 
 **Virtual Machine**: I provisioned a Windows 10 Pro instance (Standard B2s) to serve as a high-visibility target.
 **Log Analytics Workspace (LAW)**: I created a dedicated LAW to act as the "sink" for all telemetry, ensuring that logs were stored even if the endpoint was compromised.
 
-(Azure VNet and Resource Group Setup)
-Figure 1: Virtual network setup in Resource Group RG <img width="1381" height="911" alt="MS Virtual Network Creation" src="https://github.com/user-attachments/assets/13503a96-b147-4db2-9a5c-20dcaf511ed9" />
+(Azure VNet and Resource Group Setup) *Figure 1: Virtual network setup in Resource Group RG*
+
+<img width="1381" height="911" alt="MS Virtual Network Creation" src="https://github.com/user-attachments/assets/13503a96-b147-4db2-9a5c-20dcaf511ed9" />
 
 
 ---
@@ -48,7 +49,9 @@ To ensure I collected enough data for a meaningful analysis, I intentionally com
 * **Network Security Group (NSG) Configuration**: I authored a custom inbound rule set to allow all traffic (TCP/Any/Any).
 * **Analyst Rational**: While strictly against enterprise best practices, this "open-door" policy was necessary to attract automated botnets and scanners immediately upon deployment.
 
-(NSG Inbound Security Rules) Figure 2: Configuration of Inbound Rules <img width="1600" height="896" alt="Network Security Groups" src="https://github.com/user-attachments/assets/1bea2172-7ff0-4939-8daf-3d1c4235a373" />
+(Network Security Groups and Inbound Security Rules) *Figure 2: Configuration of Inbound Rules* 
+
+<img width="1600" height="896" alt="Network Security Groups" src="https://github.com/user-attachments/assets/1bea2172-7ff0-4939-8daf-3d1c4235a373" />
 I Configured the 'AllowAllInbound' rule with Priority 5500.*
 
 ---
@@ -61,26 +64,35 @@ The most technically intensive part of this project was converting "flat" Window
 2. **Transformation**: I integrated the **ipgeolocation.io** API to enrich the raw logs with Latitude, Longitude, and Country metadata.
 3. **Loading**: I directed this enriched data into a custom log file located at `C:\ProgramData\failed_rdp.log`.
 
-*Figure 3: Inspecting Windows Security Auditing logs for failed logons after querey configuration <img width="1600" height="873" alt="KQL Querey" src="https://github.com/user-attachments/assets/dc7b974c-57a5-48c5-8cc3-94c378d22263" />
-Note
+(Custom KQL Script Used to Parse Raw Log) *Figure 3: Inspecting Windows Security Auditing logs for failed logons after querey configuration*
+
+<img width="1600" height="873" alt="KQL Querey" src="https://github.com/user-attachments/assets/dc7b974c-57a5-48c5-8cc3-94c378d22263" />
+
 
 ---
 
 ## 5. Phase 3: SIEM Integration & KQL Analytics
 After configuring a Data Collection Rule (DCR) to pull my custom logs into Microsoft Sentinel, I had to develop the logic to make the data useful. I wrote a custom Kusto Query Language (KQL) script to parse the raw strings and aggregate them by geographic location.
 
-*Figure 3: Inspecting Windows Security Auditing logs for failed logons after querey configuration <img width="1600" height="873" alt="KQL Querey" src="https://github.com/user-attachments/assets/dc7b974c-57a5-48c5-8cc3-94c378d22263" />
+(Analyzing Login Attempts) *Figure 3: Inspecting Windows Security Auditing logs for failed logons after querey configuration* 
+
+<img width="1506" height="461" alt="Login Attempts" src="https://github.com/user-attachments/assets/261a9fa4-2cba-43aa-ad0b-63e4039f1887" />
+
+
+
+*Note: Vrute force attempts usually take about 8 hours to show in logs do to VM being discovered at different times in different time zones*
 
 
 ## 6. Final Observations & Live Threat Map
-The project culminated in a live, interactive heatmap that visualized the "background noise" of the internet. This dashboard transformed raw, enriched logs into a spatial representation of global threat activity. [cite: 142-143]
+The project culminated in a live, interactive heatmap that visualized the "background noise" of the internet. This dashboard transformed raw, enriched logs into a spatial representation of global threat activity.
 
-(Figure 4: Attack Map) <img width="1600" height="834" alt="heat map" src="https://github.com/user-attachments/assets/9757bf05-c994-490f-a505-ac29098c7297" />
+(Attack Map) *Figure 4: Global heatmap of live brute-force attacks visualized in Microsoft Sentinel.*
 
-*Figure 3: Global heatmap of live brute-force attacks visualized in Microsoft Sentinel.*
+<img width="1600" height="834" alt="heat map" src="https://github.com/user-attachments/assets/9757bf05-c994-490f-a505-ac29098c7297" />
+
 
 ### My Operational Findings:
 * **Initial Discovery**: My VM was identified and probed by automated scanners within minutes of the firewall change, confirming the high speed at which attackers scan public cloud IP ranges.
 * **Geographic Density**: According to my SIEM dashboard, the highest volume of attacks originated from **Jordanow, Poland** with **26.6K** events recorded, followed by significant activity from **Tilburg, Netherlands** and **Ranchos, Argentina**.
-* [cite_start]**Threat Actor Behavior**: I observed a recurring pattern of automated credential stuffing targeting the **Administrator** account, proving that default account names remain the primary targets for brute-force exploits in cloud environments.
+* **Threat Actor Behavior**: I observed a recurring pattern of automated credential stuffing targeting the **Administrator** account, proving that default account names remain the primary targets for brute-force exploits in cloud environments.
 
