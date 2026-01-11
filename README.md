@@ -36,11 +36,12 @@ Before any security analysis could occur, I had to architect the underlying infr
 **Virtual Machine**: I provisioned a Windows 10 Pro instance (Standard B2s) to serve as a high-visibility target.
 **Log Analytics Workspace (LAW)**: I created a dedicated LAW to act as the "sink" for all telemetry, ensuring that logs were stored even if the endpoint was compromised.
 
-(Azure VNet and Resource Group Setup) *Figure 1: Virtual network setup in Resource Group RG*
+(Azure VNet and Resource Group Setup) 
 
 <img width="1381" height="911" alt="MS Virtual Network Creation" src="https://github.com/user-attachments/assets/13503a96-b147-4db2-9a5c-20dcaf511ed9" />
 
-
+ *Figure 1: Virtual network setup in Resource Group RG*
+ 
 ---
 
 ## 3. Phase 1: Attack Surface Orchestration
@@ -49,10 +50,12 @@ To ensure I collected enough data for a meaningful analysis, I intentionally com
 * **Network Security Group (NSG) Configuration**: I authored a custom inbound rule set to allow all traffic (TCP/Any/Any).
 * **Analyst Rational**: While strictly against enterprise best practices, this "open-door" policy was necessary to attract automated botnets and scanners immediately upon deployment.
 
-(Network Security Groups and Inbound Security Rules) *Figure 2: Configuration of Inbound Rules* 
+(Network Security Groups and Inbound Security Rules)
 
 <img width="1600" height="896" alt="Network Security Groups" src="https://github.com/user-attachments/assets/1bea2172-7ff0-4939-8daf-3d1c4235a373" />
 I Configured the 'AllowAllInbound' rule with Priority 5500.*
+
+*Figure 2: Configuration of Inbound Rules* 
 
 ---
 
@@ -64,9 +67,11 @@ The most technically intensive part of this project was converting "flat" Window
 2. **Transformation**: I integrated the **ipgeolocation.io** API to enrich the raw logs with Latitude, Longitude, and Country metadata.
 3. **Loading**: I directed this enriched data into a custom log file located at `C:\ProgramData\failed_rdp.log`.
 
-(Custom KQL Script Used to Parse Raw Log) *Figure 3: Inspecting Windows Security Auditing logs for failed logons after querey configuration*
+(Custom KQL Script Used to Parse Raw Log) 
 
 <img width="1600" height="873" alt="KQL Querey" src="https://github.com/user-attachments/assets/dc7b974c-57a5-48c5-8cc3-94c378d22263" />
+
+*Figure 3: Inspecting Windows Security Auditing logs for failed logons after querey configuration*
 
 
 ---
@@ -77,6 +82,8 @@ After configuring a Data Collection Rule (DCR) to pull my custom logs into Micro
 (Analyzing Login Attempts) *Figure 3: Inspecting Windows Security Auditing logs for failed logons after querey configuration* 
 
 <img width="1506" height="461" alt="Login Attempts" src="https://github.com/user-attachments/assets/261a9fa4-2cba-43aa-ad0b-63e4039f1887" />
+
+ *Figure 3: Inspecting Windows Security Auditing logs for failed logons after querey configuration* 
 
 
 
@@ -89,6 +96,8 @@ The project culminated in a live, interactive heatmap that visualized the "backg
 (Attack Map) *Figure 4: Global heatmap of live brute-force attacks visualized in Microsoft Sentinel.*
 
 <img width="1600" height="834" alt="heat map" src="https://github.com/user-attachments/assets/9757bf05-c994-490f-a505-ac29098c7297" />
+
+*Figure 4: Global heatmap of live brute-force attacks visualized in Microsoft Sentinel.*
 
 
 ### My Operational Findings:
