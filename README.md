@@ -22,8 +22,6 @@ The objective of this project was to engineer a high-interaction Azure Sentinel 
 - PowerShell with Geolocation API integration for custom log enrichment and automation.
 - Kusto Query Language KQL for data parsing and building analytical workbooks
 
-## Steps
-drag & drop screenshots here or use imgur and reference them using imgsrc
 
 # PROJECT REPORT: Cloud-Native SIEM Implementation & Global Threat Intelligence 
 
